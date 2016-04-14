@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 
@@ -17,14 +18,14 @@ fclose($fp);
  * @param string $file
  * @return array
  */
-function qif($file, $offset=0)
+function qif($file)
 {
 
     $lines = file($file);
 
     $records = array();
     // return all of the data in the same order every time
-    $headers=array_fill_keys(array('date', 'investment', 'payee', 'amount', 'sum'), null);
+    $headers=array_fill_keys(array('date', 'investment', 'payee', 'amount'), null);
     $record = $headers;
     $end = 0;
 
@@ -65,8 +66,6 @@ function qif($file, $offset=0)
                     */
                     $record['amount'] = $value;
                     $record['amount'] = str_replace(',', '', $record['amount']);
-                    $record['sum'] = $offset + floatval($record['amount']);
-                    $offset = $record['sum'];
                     break;
                 case 'P':
                     /*
