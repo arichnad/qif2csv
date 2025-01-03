@@ -6,7 +6,7 @@ $csv = qif('php://stdin');
 
 $fp = fopen('php://stdout', 'w');
 foreach ($csv as $fields) {
-    fputcsv($fp, $fields);
+    fputcsv($fp, $fields, ',', '"', '\\');
 }
 fclose($fp);
 
@@ -25,7 +25,7 @@ function qif($file)
 
     $records = array();
     // return all of the data in the same order every time
-    $headers=array_fill_keys(array('date', 'investment', 'payee', 'amount'), null);
+    $headers=array_fill_keys(array('date', 'amount', '', 'payee', ''), null);
     $record = $headers;
     $end = 0;
 
@@ -58,7 +58,8 @@ function qif($file)
                     /*
                     Date. Leading zeroes on month and day can be skipped. Year can be either 4 digits or 2 digits or '6 (=2006).
                     */
-                    $record['date'] = $value;
+                    $date = explode("/", $value);
+                    $record['date'] = "$date[2]-$date[0]-$date[1]";
                     break;
                 case 'T':
                     /*
@@ -86,7 +87,7 @@ function qif($file)
                     */
                     $record['investment'] = $value;
                     break;
-                case 'C':
+                case 'C': case 'M':
                     //ignored
                     break;
                 default:
